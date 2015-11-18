@@ -26,3 +26,8 @@
 *.exe
 *.out
 *.app
+
+src/obj/
+src/bin/
+src/magnet2torrentfile.depend
+

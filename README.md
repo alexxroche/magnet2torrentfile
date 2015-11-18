@@ -17,7 +17,7 @@ If that sounds scary you have the correct reaction. It is easy! And its easy to 
 Some browsers do not maintain their own protocol preference and fall back to the system default.
 You can set/edit that, (if you know what you are doing) using 
 
-### regedit:HKEY_CLASSES_ROOT\magnet\shell\open\command 
+**regedit:HKEY_CLASSES_ROOT\magnet\shell\open\command**
 
 Under-the-hood
 --------------
@@ -83,7 +83,7 @@ I used Code::Blocks "turning C++ from Technic to Duplo" to write this and g++ to
 libcurl is the wheel that I refuse to re-invent, at the core and the site, (for which this is a
 glorified wrapper,) is https://torcache.net/
  
-### Alpha attempts "the script debarcals"
+### Alpha attempts "the script debacles"
  I first wrote a .bat that used a small bittorrent client to do the convertion, but firefox
  was only interested in .exe (possible .com). So I tried to "compile .bat2.exe" but that failed to
  convert the links.
