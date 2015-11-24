@@ -11,34 +11,72 @@ extract with 7zip (Its 4 files in their own directory.)
 Put the 4 files where you want your .torrent files
 Direct your browser to use magnet2torrentfile.exe for the magnet protocol.
 
+User Configuration
+------------------
+By default it will look for %APPDATA%\magnet2torrentfile\m2tf.cfg
+(On Win 8.1 %APPDATA% is %USERPROFILE%\AppData\Roaming\
+and if your system is in English %USERPROFILE% could be C:\Users\%USERNAME%\).
+This should be in .ini format (example config file is provided).
+ magnet2torrentfile will fall back to looking for the config file in the
+ same directory from which it was run. (i.e. pwd/%CD%) but ONLY if the
+default %APPDATA%\magnet2torrentfile directory is missing or inaccessible. 
+
+The settings in the example m2tf.cfg are hard-coded as fall-back settings 
+within the binary, (so you only need the settings that you want changed).
+
+If you are using this to upload the magnet to Transmission,
+ you SHOULD at least verify the nas_ip and nas_download_dir
+
+If tf_enabled = 1 and m2tf_site1_enabled = 1 (write the downloaded .torrent file)
+AND nas_enabled = 1 then we will try to do BOTH. The local magnet upload is NOT
+(at this time) a fall back, but a function that WILL be tried AFTER the attempt
+to download the .torrent, (if that is enabled).
+
+If tf_enabled = 0 and m2tf_site1_enabled = 0 and nas_enabled = 1
+ then no remote traffic will be generated, and no Internet access will be required.
+ 
+Updates
+-------
+This program does not check for updates. It lets you do that when YOU chose, (by
+checking the site of origin.) 
+
 Hacking the Registry
 --------------------
 If that sounds scary you have the correct reaction. It is easy! And its easy to get wrong.
 Some browsers do not maintain their own protocol preference and fall back to the system default.
 You can set/edit that, (if you know what you are doing) using 
 
-**regedit:HKEY_CLASSES_ROOT\magnet\shell\open\command**
+regedit:HKEY_CLASSES_ROOT\magnet\shell\open\command
 
 Under-the-hood
 --------------
 
-At the moment the program expects to be fed a magnet, it uses libcurl to talk to 
+At the moment the program expects to be fed a magnet.
+If Torrent File is enabled (tf_enabled=1) it uses libcurl to talk to 
 https://torcache.net/ to download the .torrent file.
+
+If uploading the magnet directly to Transmission is enabled (nas_enabled=1)
+then we also use libcurl. 
+
+**libcurl** (http://curl.haxx.se/libcurl/) was downloaded from 
+http://curl.haxx.se/download.html and we are using the precompiled
+binaries (libcurl.dll libidn-11.dll zlib1.dll) found within
+http://curl.haxx.se/gknw.net/7.40.0/dist-w32/renamed-curl-7.40.0-devel-mingw32.zip
+
+https://github.com/compuphase/minIni is used to parse the config file
 
 TODO
 ----
 
-	* Option to save/upload the magnet directly to transmission web interface; but that will need...
-	* m2tf.cfg configuration file to access other torrent cacheing sites and enter NAS details, and set a destination (PWD isn't very clean).
-	* GUI to view/edit the m2tf.cfg (This should probably be the default if the program is run without argements.)
+	* GUI to view/edit the m2tf.cfg (This should probably be the default if the program is run without arguments.)
 	* NSIS installer
-	* daemon.m2tf where it can maintain a connectionto the DHT swarm and create .torrent files from links that it is fed and ones that it finds
+	* daemon.m2tf where it can maintain a connection the DHT swarm and create .torrent files from links that it is fed and ones that it finds
 	* Linux version
 	
-daemon.m2tf
+daemon
 -----------
 I come from a unix world, so I like my programs small, fast and doing one job, (and doing it well hopefully.)
-Daemon.m2tf should be a seperate program.
+m2tfd should be a separate program.
 	
 Licence
 -------
@@ -58,7 +96,7 @@ Output file is bin\Release\magnet2torrentfile.exe with size 504.00 KB
 Process terminated with status 0 (0 minute(s), 0 second(s))
 0 error(s), 0 warning(s) (0 minute(s), 0 second(s))
 	
-If you want a simple example of using libcurl with C++ to download a file have a look at src/main.cpp
+If you want a simple example of using libcurl with C++ to download a file have a look at 4a75dab:src/main.cpp 
 !Disclaimer! I an NOT a C++ expert, so my use of c_str in C++ code is probably reprehensible.
 Thankfully you can fork this and improve it.	
 	
@@ -81,14 +119,14 @@ I had a lovely QNAP NAS running transmission on my LAN. It seemed dull to have t
  So I wrote this C++ program so that Firefox would have something to hand-off the magnet links.
 I used Code::Blocks "turning C++ from Technic to Duplo" to write this and g++ to compile.
 libcurl is the wheel that I refuse to re-invent, at the core and the site, (for which this is a
-glorified wrapper,) is https://torcache.net/
+glorified wrapper,) to https://torcache.net/
  
 ### Alpha attempts "the script debacles"
- I first wrote a .bat that used a small bittorrent client to do the convertion, but firefox
- was only interested in .exe (possible .com). So I tried to "compile .bat2.exe" but that failed to
- convert the links.
+ I first wrote a .bat that used a small bittorrent client to do the conversion, but Firefox
+ was only interested in .exe (possible .com). So I tried to "compile .bat2.exe" but the resulting .exe
+ failed to convert the links.
  
  Then I tried to (ab)use qBittorrent with the "save .torrent file" and "start paused" options.
- (At this point the imaginary perfectionist techie in my head, (called Shish) was appaplectic. He did not approve.)
+ (At this point the imaginary perfectionist techie in my head, (called Shish) was apoplectic. He did not approve.)
  Anyway it didn't work for the second magnet that I handed it: side-note; I thought about striping 
  qBittorrent to qBitMagnet. It would be a headless version that used DHT to convert magnets to .torrent files.
